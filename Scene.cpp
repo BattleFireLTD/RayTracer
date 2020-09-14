@@ -7,6 +7,7 @@
 #include "AliceMaterial.h"
 #include "AliceCamera.h"
 #include "AliceObject.h"
+#include "Texture.h"
 static int sViewportWidth = 0, sViewportHeight = 0;
 static Alice::Object*sHeadObject = nullptr;
 static Alice::Object*sSceneObjects[1024];
@@ -76,7 +77,7 @@ void RenderLine(int start_line_index, int line_count) {
 }
 void InitManualScene() {
 	Alice::Camera::Singleton()->LookAt(Alice::Vector3(13.0f, 2.0f, 3.0f), Alice::Vector3(0.0f, 0.0f, 0.0f), Alice::Vector3(0.0f, 1.0f, 0.0f));
-	sHeadObject = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, 0.0f, 0.0f), 0.5f), new Alice::LambertMaterial(Alice::Vector3(0.8f, 0.3f, 0.3f)));
+	sHeadObject = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, 0.0f, 0.0f), 0.5f), new Alice::LambertMaterial(new Alice::ConstantTexture(Alice::Vector3(0.8f, 0.3f, 0.3f))));
 	sHeadObject->SetName("root ball");
 	sSceneObjects[sSceneObjectCount++] = sHeadObject;
 	Alice::Object*object = new Alice::Object(new Alice::Sphere(Alice::Vector3(-1.0f, 0.0f, 0.0f), 0.5f), new Alice::DielectricMaterial(1.5f));
@@ -88,7 +89,7 @@ void InitManualScene() {
 	object = new Alice::Object(new Alice::Sphere(Alice::Vector3(1.0f, 0.0f, 0.0f), 0.5f), new Alice::MetalMaterial(Alice::Vector3(0.8f, 0.8f, 0.8f), 0.1f));
 	object->SetName("metal");
 	AppendSceneObject(object);
-	object = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, -1000.0f, 0.0f), 1000.0f), new Alice::LambertMaterial(Alice::Vector3(0.8f, 0.8f, 0.8f)));
+	object = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, -1000.0f, 0.0f), 1000.0f), new Alice::LambertMaterial(new Alice::ConstantTexture(Alice::Vector3(0.8f, 0.8f, 0.8f))));
 	object->SetName("bottom");
 	AppendSceneObject(object);
 	sRootNode = new Alice::BVHNode;
@@ -96,6 +97,9 @@ void InitManualScene() {
 }
 void InitRandomScene() {
 	Alice::Camera::Singleton()->LookAt(Alice::Vector3(13.0f, 2.0f, 3.0f), Alice::Vector3(0.0f, 0.0f, 0.0f), Alice::Vector3(0.0f, 1.0f, 0.0f));
+	Alice::Texture*green_texture = new Alice::ConstantTexture(Alice::Vector3(0.2f, 0.3f, 0.1f));
+	Alice::Texture*white_texture = new Alice::ConstantTexture(Alice::Vector3(0.9f, 0.9f, 0.9f));
+	Alice::Texture*checker_texture = new Alice::CheckerTexture(green_texture,white_texture);
 	for (int x = -10; x < 10; ++x) {
 		for (int z = -10; z < 10; ++z) {
 			float choose_material = randf();
@@ -104,7 +108,7 @@ void InitRandomScene() {
 				if (choose_material < 0.4f) {
 					Alice::Object*object = new Alice::Object(
 						new Alice::Sphere(center, 0.2f),
-						new Alice::LambertMaterial(Alice::Vector3(randf()*randf(), randf()*randf(), randf()*randf())));
+						new Alice::LambertMaterial(new Alice::ConstantTexture(Alice::Vector3(randf()*randf(), randf()*randf(), randf()*randf()))));
 					AppendSceneObject(object);
 				}
 				else if (choose_material < 0.85f) {
@@ -122,7 +126,7 @@ void InitRandomScene() {
 			}
 		}
 	}
-	Alice::Object*object = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, -1000.0f, 0.0f), 1000.0f), new Alice::LambertMaterial(Alice::Vector3(0.8f, 0.8f, 0.8f)));
+	Alice::Object*object = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, -1000.0f, 0.0f), 1000.0f), new Alice::LambertMaterial(checker_texture));
 	object->SetName("bottom");
 	AppendSceneObject(object);
 	sRootNode = new Alice::BVHNode;

@@ -2,6 +2,7 @@
 #include "AliceVector3.h"
 #include "AliceRay.h"
 #include "LinkedList.h"
+#include "Texture.h"
 namespace Alice {
 	class Material {
 	public:
@@ -10,8 +11,8 @@ namespace Alice {
 	};
 	class LambertMaterial :public Material {
 	public:
-		Vector3 mAttenuation;
-		LambertMaterial(Vector3 &attenuation) :mAttenuation(attenuation) {}
+		Texture *mAlbedo;
+		LambertMaterial(Texture*albedo) :mAlbedo(albedo) {}
 		virtual bool Scatter(const Ray & input_ray, Ray & out_ray, const HitPoint &point) const;
 	};
 	class MetalMaterial :public Material {
