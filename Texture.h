@@ -34,9 +34,11 @@ namespace Alice {
 	class NoiseTexture :public Texture {
 	public:
 		Perlin mPerlinNoise;
-		NoiseTexture(){}
+		float mScale;
+		NoiseTexture():mScale(1.0f){}
+		NoiseTexture(float scale):mScale(scale){}
 		virtual Vector3 Sample(float u, float v, const Vector3 & p) const {
-			return Vector3(1.0f, 1.0f, 1.0f)*mPerlinNoise.Noise1(p);
+			return Vector3(1.0f, 1.0f, 1.0f)*0.5f*(1.0f+sinf(mScale*p.x)+5.0f*mPerlinNoise.NoiseTrilinearHermiteCubic(p));
 		}
 	};
 }

@@ -13,7 +13,7 @@ static Alice::Object*sHeadObject = nullptr;
 static Alice::Object*sSceneObjects[1024];
 static Alice::BVHNode*sRootNode = nullptr;
 static int sSceneObjectCount = 0;
-static int sSampleCountPerPixel = 1;
+static int sSampleCountPerPixel = 32;
 static int sCurrnetRenderPixelX = 0;
 static int sCurrentRenderPixelY = 0;
 static bool sIsRenderDone = false;
@@ -64,7 +64,7 @@ Alice::Vector3 RenderOnePixel(int x, int y, int sample_count_per_pixel) {
 }
 void InitManualScene() {
 	Alice::Camera::Singleton()->LookAt(Alice::Vector3(10.0f, 5.0f, 5.0f), Alice::Vector3(0.0f, 0.0f, 0.0f), Alice::Vector3(0.0f, 1.0f, 0.0f));
-	Alice::Texture*noise_texture = new Alice::NoiseTexture();
+	Alice::Texture*noise_texture = new Alice::NoiseTexture(0.3f);
 	Alice::Object*object = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, 2.0f, 0.0f), 2.0f), new Alice::LambertMaterial(noise_texture));
 	object->SetName("root ball");
 	AppendSceneObject(object);
@@ -79,7 +79,7 @@ void InitRandomScene() {
 	Alice::Texture*green_texture = new Alice::ConstantTexture(Alice::Vector3(0.2f, 0.3f, 0.1f));
 	Alice::Texture*white_texture = new Alice::ConstantTexture(Alice::Vector3(0.9f, 0.9f, 0.9f));
 	Alice::Texture*checker_texture = new Alice::CheckerTexture(green_texture, white_texture);
-	Alice::Texture*noise_texture = new Alice::NoiseTexture();
+	Alice::Texture*noise_texture = new Alice::NoiseTexture(0.3f);
 	for (int x = -10; x < 10; ++x) {
 		for (int z = -10; z < 10; ++z) {
 			float choose_material = randf();

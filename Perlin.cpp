@@ -39,19 +39,26 @@ namespace Alice {
 		}
 		return accm;
 	}
-	float Perlin::Noise0(const Vector3 & p) const {
+	Perlin*Perlin::mSelf = nullptr;
+	Perlin*Perlin::Singleton() {
+		if (nullptr==mSelf){
+			mSelf = new Perlin;
+		}
+		return mSelf;
+	}
+	float Perlin::NoiseOriginal(const Vector3 & p) const {
 		int i = int(4 * p.x) & 255;
 		int j = int(4 * p.y) & 255;
 		int k = int(4 * p.z) & 255;
 		return mRandomFloat[mPermX[i] ^ mPermY[j] ^ mPermZ[k]];
 	}
-	float Perlin::Noise1(const Vector3 & p) const {
+	float Perlin::NoiseTrilinear(const Vector3 & p) const {
 		float u = p.x - floorf(p.x);
-		float v = p.x - floorf(p.y);
-		float w = p.x - floorf(p.z);
-		int i = int(floorf(p.x)); //int(4 * p.x) & 255;
-		int j = int(floorf(p.y)); //int(4 * p.y) & 255;
-		int k = int(floorf(p.z)); //int(4 * p.z) & 255;
+		float v = p.y - floorf(p.y);
+		float w = p.z - floorf(p.z);
+		int i = int(floorf(p.x));
+		int j = int(floorf(p.y));
+		int k = int(floorf(p.z));
 		float c[2][2][2];
 		for (int di = 0; di < 2; ++di) {
 			for (int dj = 0; dj < 2; ++dj) {
@@ -61,5 +68,25 @@ namespace Alice {
 			}
 		}
 		return TrilinearInterpolate(c,u,v,w);
+	}
+	float Perlin::NoiseTrilinearHermiteCubic(const Vector3 & p) const {
+		float u = p.x - floorf(p.x);
+		float v = p.y - floorf(p.y);
+		float w = p.z - floorf(p.z); 
+		u = u * u*(3 - 2 * u);
+		v = v * v*(3 - 2 * v);
+		w = w * w*(3 - 2 * w);
+		int i = int(floorf(p.x));
+		int j = int(floorf(p.y));
+		int k = int(floorf(p.z));
+		float c[2][2][2];
+		for (int di = 0; di < 2; ++di) {
+			for (int dj = 0; dj < 2; ++dj) {
+				for (int dk = 0; dk < 2; ++dk) {
+					c[di][dj][dk] = mRandomFloat[mPermX[(i + di) & 255] ^ mPermY[(j + dj) & 255] ^ mPermZ[(k + dk) & 255]];
+				}
+			}
+		}
+		return TrilinearInterpolate(c, u, v, w);
 	}
 }
