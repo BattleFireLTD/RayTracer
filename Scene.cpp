@@ -64,7 +64,7 @@ Alice::Vector3 RenderOnePixel(int x, int y, int sample_count_per_pixel) {
 }
 void InitManualScene() {
 	Alice::Camera::Singleton()->LookAt(Alice::Vector3(10.0f, 5.0f, 5.0f), Alice::Vector3(0.0f, 0.0f, 0.0f), Alice::Vector3(0.0f, 1.0f, 0.0f));
-	Alice::Texture*noise_texture = new Alice::NoiseTexture(0.3f);
+	Alice::Texture*noise_texture = new Alice::NoiseTexture(5.0f);
 	Alice::Object*object = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, 2.0f, 0.0f), 2.0f), new Alice::LambertMaterial(noise_texture));
 	object->SetName("root ball");
 	AppendSceneObject(object);
