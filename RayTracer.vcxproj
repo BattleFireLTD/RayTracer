@@ -161,6 +161,7 @@
     <ClCompile Include="AliceQuaternion.cpp" />
     <ClCompile Include="AliceVector2.cpp" />
     <ClCompile Include="AliceVector3.cpp" />
+    <ClCompile Include="Perlin.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="utils.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="AliceVector3.h" />
     <ClInclude Include="AliceVector4.h" />
     <ClInclude Include="LinkedList.h" />
+    <ClInclude Include="Perlin.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="utils.h" />

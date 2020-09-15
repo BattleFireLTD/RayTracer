@@ -49,7 +49,7 @@ Alice::Vector3 RenderOneSample(Alice::Ray & input_ray, int bounce_time) {
 		}
 		return Alice::Vector3(0.0f, 0.0f, 0.0f);
 	}
-	return GetBackgroundColor(input_ray);
+	return Alice::Vector3(1.0f,1.0f,1.0f);// GetBackgroundColor(input_ray);
 }
 Alice::Vector3 RenderOnePixel(int x, int y, int sample_count_per_pixel) {
 	Alice::Vector3 color(0.0f, 0.0f, 0.0f);
@@ -62,34 +62,13 @@ Alice::Vector3 RenderOnePixel(int x, int y, int sample_count_per_pixel) {
 	color = color * (1.0f / float(sample_count_per_pixel));
 	return color;
 }
-void RenderLine(int start_line_index, int line_count) {
-	while (line_count > 0 && start_line_index < sViewportHeight) {
-		for (int i = 0; i < sViewportWidth; i++) {
-			Alice::Vector3 color = RenderOnePixel(i, start_line_index, sSampleCountPerPixel);
-			int ir = int(255.99f*color.x);
-			int ig = int(255.99f*color.y);
-			int ib = int(255.99f*color.z);
-			aSetColor(i, start_line_index, ir, ig, ib, 255);
-		}
-		start_line_index++;
-		line_count--;
-	}
-}
 void InitManualScene() {
-	Alice::Camera::Singleton()->LookAt(Alice::Vector3(13.0f, 2.0f, 3.0f), Alice::Vector3(0.0f, 0.0f, 0.0f), Alice::Vector3(0.0f, 1.0f, 0.0f));
-	sHeadObject = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, 0.0f, 0.0f), 0.5f), new Alice::LambertMaterial(new Alice::ConstantTexture(Alice::Vector3(0.8f, 0.3f, 0.3f))));
-	sHeadObject->SetName("root ball");
-	sSceneObjects[sSceneObjectCount++] = sHeadObject;
-	Alice::Object*object = new Alice::Object(new Alice::Sphere(Alice::Vector3(-1.0f, 0.0f, 0.0f), 0.5f), new Alice::DielectricMaterial(1.5f));
-	object->SetName("bubble outer");
+	Alice::Camera::Singleton()->LookAt(Alice::Vector3(10.0f, 5.0f, 5.0f), Alice::Vector3(0.0f, 0.0f, 0.0f), Alice::Vector3(0.0f, 1.0f, 0.0f));
+	Alice::Texture*noise_texture = new Alice::NoiseTexture();
+	Alice::Object*object = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, 2.0f, 0.0f), 2.0f), new Alice::LambertMaterial(noise_texture));
+	object->SetName("root ball");
 	AppendSceneObject(object);
-	object = new Alice::Object(new Alice::Sphere(Alice::Vector3(-1.0f, 0.0f, 0.0f), -0.45f), new Alice::DielectricMaterial(1.5f));
-	object->SetName("bubble inner");
-	AppendSceneObject(object);
-	object = new Alice::Object(new Alice::Sphere(Alice::Vector3(1.0f, 0.0f, 0.0f), 0.5f), new Alice::MetalMaterial(Alice::Vector3(0.8f, 0.8f, 0.8f), 0.1f));
-	object->SetName("metal");
-	AppendSceneObject(object);
-	object = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, -1000.0f, 0.0f), 1000.0f), new Alice::LambertMaterial(new Alice::ConstantTexture(Alice::Vector3(0.8f, 0.8f, 0.8f))));
+	object = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, -1000.0f, 0.0f), 1000.0f), new Alice::LambertMaterial(noise_texture));
 	object->SetName("bottom");
 	AppendSceneObject(object);
 	sRootNode = new Alice::BVHNode;
@@ -99,7 +78,8 @@ void InitRandomScene() {
 	Alice::Camera::Singleton()->LookAt(Alice::Vector3(13.0f, 2.0f, 3.0f), Alice::Vector3(0.0f, 0.0f, 0.0f), Alice::Vector3(0.0f, 1.0f, 0.0f));
 	Alice::Texture*green_texture = new Alice::ConstantTexture(Alice::Vector3(0.2f, 0.3f, 0.1f));
 	Alice::Texture*white_texture = new Alice::ConstantTexture(Alice::Vector3(0.9f, 0.9f, 0.9f));
-	Alice::Texture*checker_texture = new Alice::CheckerTexture(green_texture,white_texture);
+	Alice::Texture*checker_texture = new Alice::CheckerTexture(green_texture, white_texture);
+	Alice::Texture*noise_texture = new Alice::NoiseTexture();
 	for (int x = -10; x < 10; ++x) {
 		for (int z = -10; z < 10; ++z) {
 			float choose_material = randf();
@@ -126,14 +106,15 @@ void InitRandomScene() {
 			}
 		}
 	}
-	Alice::Object*object = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, -1000.0f, 0.0f), 1000.0f), new Alice::LambertMaterial(checker_texture));
+	Alice::Object*object = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, -1000.0f, 0.0f), 1000.0f), new Alice::LambertMaterial(noise_texture));
 	object->SetName("bottom");
 	AppendSceneObject(object);
 	sRootNode = new Alice::BVHNode;
 	sRootNode->BuildBoundingVolumeHierarchy(sSceneObjects, sSceneObjectCount);
 }
 void InitScene() {
-	InitRandomScene();
+	//InitRandomScene();
+	InitManualScene();
 	aClearColor(0, 0, 0, 255);
 	aClear(A_COLOR_BUFFER_BIT);
 	GetProcessAffinityMask(GetCurrentProcess(), &sProcessAffinityMask, &sSystemMask);

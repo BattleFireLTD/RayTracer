@@ -1,6 +1,7 @@
 #pragma once
 #include "Alice.h"
 #include "AliceVector3.h"
+#include "Perlin.h"
 namespace Alice {
 	class Texture {
 	public:
@@ -28,6 +29,14 @@ namespace Alice {
 			else {
 				return mEven->Sample(u, v, p);
 			}
+		}
+	};
+	class NoiseTexture :public Texture {
+	public:
+		Perlin mPerlinNoise;
+		NoiseTexture(){}
+		virtual Vector3 Sample(float u, float v, const Vector3 & p) const {
+			return Vector3(1.0f, 1.0f, 1.0f)*mPerlinNoise.Noise1(p);
 		}
 	};
 }
