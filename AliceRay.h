@@ -5,6 +5,7 @@ namespace Alice {
 	struct HitPoint {
 		Vector3 mPosition;
 		Vector3 mNormal;
+		Vector3 mTexcoord;
 		Material*mMaterial;
 		float mTValue;
 		HitPoint() {
@@ -14,6 +15,7 @@ namespace Alice {
 		void operator=(const HitPoint & r) {
 			mPosition = r.mPosition;
 			mNormal = r.mNormal;
+			mTexcoord = r.mTexcoord;
 			mMaterial = r.mMaterial;
 			mTValue = r.mTValue;
 		}

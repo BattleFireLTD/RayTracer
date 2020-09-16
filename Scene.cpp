@@ -63,12 +63,16 @@ Alice::Vector3 RenderOnePixel(int x, int y, int sample_count_per_pixel) {
 	return color;
 }
 void InitManualScene() {
-	Alice::Camera::Singleton()->LookAt(Alice::Vector3(10.0f, 5.0f, 5.0f), Alice::Vector3(0.0f, 0.0f, 0.0f), Alice::Vector3(0.0f, 1.0f, 0.0f));
-	Alice::Texture*noise_texture = new Alice::NoiseTexture(2.0f);
-	Alice::Object*object = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, 2.0f, 0.0f), 2.0f), new Alice::LambertMaterial(noise_texture));
+	Alice::Camera::Singleton()->LookAt(Alice::Vector3(3.0f, 2.0f, 3.0f), Alice::Vector3(0.0f, 0.0f, 0.0f), Alice::Vector3(0.0f, 1.0f, 0.0f));
+	Alice::Texture*green_texture = new Alice::ConstantTexture(Alice::Vector3(0.2f, 0.3f, 0.1f));
+	Alice::Texture*white_texture = new Alice::ConstantTexture(Alice::Vector3(0.9f, 0.9f, 0.9f));
+	Alice::Texture*checker_texture = new Alice::CheckerTexture(green_texture, white_texture);
+	Alice::TextureRGB*rgb_texture = new Alice::TextureRGB;
+	rgb_texture->SetImage("Res/earth.bmp");
+	Alice::Object*object = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, 0.5f, 0.0f), 0.5f), new Alice::LambertMaterial(rgb_texture));
 	object->SetName("root ball");
 	AppendSceneObject(object);
-	object = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, -1000.0f, 0.0f), 1000.0f), new Alice::LambertMaterial(noise_texture));
+	object = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, -1000.0f, 0.0f), 1000.0f), new Alice::LambertMaterial(checker_texture));
 	object->SetName("bottom");
 	AppendSceneObject(object);
 	sRootNode = new Alice::BVHNode;

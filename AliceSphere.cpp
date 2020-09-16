@@ -6,6 +6,12 @@ namespace Alice {
 		mOrigin = origin;
 		mRadius = radius;
 	}
+	void Sphere::GetSphericalUV(Vector3 & p, float & u, float & v) const {
+		float phi = atan2f(p.z, p.x);
+		float theta = asinf(p.y);
+		u = 1.0f - (phi + 3.1415f) / (2.0f*3.1415f);
+		v = (theta+3.1415f/2.0f) / 3.1415f;
+	}
 	bool Sphere::HitTest(const Ray & input_ray, float t_min, float t_max, HitPoint & hit_point) const {
 		Alice::Vector3 oc = input_ray.mOrigin - mOrigin;
 		float a = input_ray.Direction().LengthSquared();
@@ -28,6 +34,7 @@ namespace Alice {
 				hit_point.mTValue = temp;
 				hit_point.mPosition = input_ray.PointAt(temp);
 				hit_point.mNormal = (hit_point.mPosition - mOrigin) * (1.0f / mRadius);
+				GetSphericalUV(hit_point.mPosition, hit_point.mTexcoord.x, hit_point.mTexcoord.y);
 				return true;
 			}
 		}

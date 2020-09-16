@@ -45,4 +45,13 @@ namespace Alice {
 			//return Vector3(1.0f, 1.0f, 1.0f)*0.5f*(1.0f+sinf(mScale*p.x)+5.0f*mPerlinNoise.NoiseTrilinearHermiteCubic(p));
 		}
 	};
+	class TextureRGB :public Texture {
+	public:
+		unsigned char *mImageData;
+		int mWidth, mHeight;
+	public:
+		TextureRGB();
+		void SetImage(const char * path);
+		virtual Vector3 Sample(float u, float v, const Vector3 & p) const;
+	};
 }

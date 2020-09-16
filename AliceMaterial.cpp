@@ -8,7 +8,7 @@ namespace Alice {
 		Alice::Vector3 random_vec = random_in_unit_sphere();
 		Alice::Vector3 new_ray_target = point.mPosition + point.mNormal + random_vec;
 		Alice::Vector3 new_ray_direction = new_ray_target - point.mPosition;
-		out_ray.Set(point.mPosition, new_ray_direction, GetColor(input_ray.mLightingAttenuation,mAlbedo->Sample(0,0,point.mPosition)));
+		out_ray.Set(point.mPosition, new_ray_direction, GetColor(input_ray.mLightingAttenuation,mAlbedo->Sample(point.mTexcoord.x,point.mTexcoord.y,point.mPosition)));
 		return true;
 	}
 	bool MetalMaterial::Scatter(const Ray & input_ray, Ray & out_ray, const HitPoint &point)  const {
