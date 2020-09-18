@@ -34,22 +34,24 @@ void AppendSceneObject(Alice::Object*object) {
 	sSceneObjects[sSceneObjectCount++] = object;
 }
 Alice::Vector3 GetBackgroundColor(Alice::Ray & input_ray) {
+	return Alice::Vector3(0.0f,0.0f,0.0f);
 	float t = 0.5f*(input_ray.mDirection.y + 1.0f);
 	return (1.0f - t)*Alice::Vector3(1.0f, 1.0f, 1.0f) + t * Alice::Vector3(0.5f, 0.7f, 1.0f);
 }
 Alice::Vector3 RenderOneSample(Alice::Ray & input_ray, int bounce_time) {
 	Alice::HitPoint hitPoint;
 	if (sRootNode->HitTest(input_ray, 0.001f, 100.0f, hitPoint)) {
+		Alice::Vector3 emitted = hitPoint.mMaterial->Emitted(hitPoint.mTexcoord.x, hitPoint.mTexcoord.y, hitPoint.mPosition);
 		if (bounce_time < 50) {
 			Alice::Ray scattered;
 			if (hitPoint.mMaterial->Scatter(input_ray, scattered, hitPoint)) {
 				Alice::Vector3 color = RenderOneSample(scattered, bounce_time + 1);
-				return  Alice::MultiplyComponentWise(scattered.mLightingAttenuation, color);
+				return  emitted+Alice::MultiplyComponentWise(scattered.mLightingAttenuation, color);
 			}
 		}
-		return Alice::Vector3(0.0f, 0.0f, 0.0f);
+		return emitted;
 	}
-	return Alice::Vector3(1.0f,1.0f,1.0f);// GetBackgroundColor(input_ray);
+	return  GetBackgroundColor(input_ray);
 }
 Alice::Vector3 RenderOnePixel(int x, int y, int sample_count_per_pixel) {
 	Alice::Vector3 color(0.0f, 0.0f, 0.0f);
@@ -63,14 +65,21 @@ Alice::Vector3 RenderOnePixel(int x, int y, int sample_count_per_pixel) {
 	return color;
 }
 void InitManualScene() {
-	Alice::Camera::Singleton()->LookAt(Alice::Vector3(3.0f, 2.0f, 3.0f), Alice::Vector3(0.0f, 0.0f, 0.0f), Alice::Vector3(0.0f, 1.0f, 0.0f));
+	Alice::Camera::Singleton()->LookAt(Alice::Vector3(3.0f, 3.0f, 2.0f), Alice::Vector3(0.0f, 0.0f, 0.0f), Alice::Vector3(0.0f, 1.0f, 0.0f));
 	Alice::Texture*green_texture = new Alice::ConstantTexture(Alice::Vector3(0.2f, 0.3f, 0.1f));
 	Alice::Texture*white_texture = new Alice::ConstantTexture(Alice::Vector3(0.9f, 0.9f, 0.9f));
+	Alice::Texture*white_light_texture = new Alice::ConstantTexture(Alice::Vector3(4.0f, 4.0f, 4.0f));
 	Alice::Texture*checker_texture = new Alice::CheckerTexture(green_texture, white_texture);
 	Alice::TextureRGB*rgb_texture = new Alice::TextureRGB;
 	rgb_texture->SetImage("Res/earth.bmp");
 	Alice::Object*object = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, 0.5f, 0.0f), 0.5f), new Alice::LambertMaterial(rgb_texture));
 	object->SetName("root ball");
+	AppendSceneObject(object); 
+	object = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, 1.5f, 0.0f), 0.2f), new Alice::DiffuseLightSourceMaterial(white_light_texture));
+	object->SetName("light ball");
+	AppendSceneObject(object);
+	object = new Alice::Object(new Alice::XYPlane(0.0f,1.0f,0.0f,2.0f,-1.0f), new Alice::DiffuseLightSourceMaterial(white_light_texture));
+	object->SetName("rectangle");
 	AppendSceneObject(object);
 	object = new Alice::Object(new Alice::Sphere(Alice::Vector3(0.0f, -1000.0f, 0.0f), 1000.0f), new Alice::LambertMaterial(checker_texture));
 	object->SetName("bottom");
